@@ -41,7 +41,7 @@ E: 		CREATE DATABASE	STRING DELIM E		{createDb($3);}
 		|									{;}
 		;
 	
-CREATETABLE:	CREATE TABLE STRING'.'STRING '(' TABLEATTRIBUTES ')' 	{printf("%s.%s-created\n",$3,$5);}
+CREATETABLE:	CREATE TABLE STRING'.'STRING '(' TABLEATTRIBUTES ')' 	{createTable($3,$5,$7);}
 				| CREATE TABLE STRING '(' TABLEATTRIBUTES ')'			{createTable(NULL,$3, $5);}
 		;
 

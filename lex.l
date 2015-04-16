@@ -25,6 +25,7 @@ insert		(?i:insert)
 into			(?i:into)
 values		(?i:values)
 clear		(?i:clear)
+use			(?i:use)
 address		\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}
 
 
@@ -55,6 +56,7 @@ minus		\-
 {into}			{return INTO;}
 {values}			{return VALUES;}
 {clear}			{return CLEAR;}
+{use}			{return USE;}
 
  	
 {datatype}		{yylval.ch=strdup(yytext);return DATATYPE;}
