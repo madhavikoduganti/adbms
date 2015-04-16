@@ -69,7 +69,9 @@ void createDb(char * dbName){
 //------------------------added to metadata of root
 }
 
+void useDb(char * dbName){
 
+}
 
 struct StringList * makeStringNode(char * string1, char * string2){
 	struct StringList * node = (struct StringList *) malloc(sizeof(struct StringList));
