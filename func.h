@@ -28,6 +28,7 @@ void createDb(char * dbName){
 	char path[100];
 	FILE * fp;
 //-------------------------check for existence of the database previously
+
 	strcpy(path,root);
 	int len;
 	DIR * dirp;
@@ -35,7 +36,7 @@ void createDb(char * dbName){
 	len = strlen(dbName);
 	dirp = opendir(root);
 	while ((dp = readdir(dirp)) != NULL){
-		if ( !strcmp(dp->d_name, dbName)) {
+			if ( !strcmp(dp->d_name, dbName)) {
 			(void)closedir(dirp);
 			printf("Database already exists.\n");
 			return;

@@ -5,7 +5,7 @@
 	#include <sys/types.h>
 	#include <sys/stat.h>
 	#include <unistd.h>
-     #include <dirent.h>
+	#include <dirent.h>
 	#include "decls.h"
 	#include "func.h"
 	void yyerror(char *);
@@ -76,6 +76,23 @@ void yyerror(char *s) {
     fprintf(stderr, "line %d: %s\n", yylineno, s);
 }
 int main(void){
+	int rootFlag=1;
+	int len;
+	DIR * dirp;
+	struct dirent * dp;
+	len = strlen("root");
+	dirp = opendir("./");
+	while ((dp = readdir(dirp)) != NULL){
+			if ( !strcmp(dp->d_name,"root")) {
+			(void)closedir(dirp);
+			rootFlag=0;
+			break;
+		}
+	}
+	if(rootFlag){
+		int result = mkdir("root", 0777);
+	}
+
 	yyparse();
 	return 0;
 }
