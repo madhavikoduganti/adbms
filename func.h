@@ -47,6 +47,11 @@ void createTable(char * dbName,char * tableName,struct StringList * attrList){
 	fputs("\n",fp);
 	fputs("0",fp);
 	fclose(fp);	
+	path[0]='\0';	strcat(path,root);	strcat(path, "/");	strcat(path, dbName);	strcat(path,"/");	strcat(path, "metadata-tables.txt");
+	fp =(FILE *) fopen(path,"a");
+	fputs(tableName,fp);
+	fputs("\n",fp);
+	fclose(fp);		
 	printf("table created\n");
 }
 
@@ -122,12 +127,60 @@ void useDb(char * dbName){
 	
 }
 
+
+void insert(char * tableName,struct StringList * columns,struct StringList * tuple){
+	//1.see database in use
+	//2.check if the table with tableName is present in database
+	//3.check if columnnames are correct and note their respective datatypes
+	//4.check if number of columns and dimension of tuple are one and the same
+	//5.check if the tuples match their respective datatype
+	//6.if yes insert.. if not leave an error message
+	char path[100], tablename[100];	
+	DIR * dirp;
+	struct dirent * dp;
+	//1.
+	if(dbInUse[0]!='\0'){
+		//2.
+
+		path[0]='\0';	strcpy(path,root);	strcat(path, "/");	strcat(path, dbInUse);	strcat(path,"/");
+		tablename[0]='\0';	strcpy(tablename,tableName);	strcat(tablename,".txt");
+		int tableFlag=0;
+		dirp = opendir(path);
+		while ((dp = readdir(dirp)) != NULL){
+			if ( !strcmp(dp->d_name, tablename)) {
+				tableFlag=1;
+				break;
+			}
+		}
+		(void)closedir(dirp);
+		if(tableFlag==0){
+			printf("The table:%s doesnot exist in the database:%s.\n",tableName,dbInUse);
+			return;
+		}else{
+			File * fp;
+			path[0]='\0'; strcpy(path,root); strcat(path, "/"); strcat(path, dbInUse); strcat(path,"/"); strcat(path,tableName); strcat(path,"_metadata.txt");
+			fp =(FILE *) fopen(path,"a");
+			
+
+		
+		}
+	
+	}
+	
+	
+	printf("tuple inserted\n");
+}
+
 struct StringList * makeStringNode(char * string1, char * string2){
 	struct StringList * node = (struct StringList *) malloc(sizeof(struct StringList));
-	node->string1 = (char *) malloc(sizeof(char)* (strlen(string1)+1));
-	strcpy(node->string1,string1);
-	node->string2 = (char *) malloc(sizeof(char)* (strlen(string2)+1));
-	strcpy(node->string2,string2);
+	if(string1!=NULL){
+		node->string1 = (char *) malloc(sizeof(char)* (strlen(string1)+1));
+		strcpy(node->string1,string1);
+	}
+	if(string2!=NULL){
+		node->string2 = (char *) malloc(sizeof(char)* (strlen(string2)+1));
+		strcpy(node->string2,string2);
+	}
 	node->next=NULL;
 	return node;
 }

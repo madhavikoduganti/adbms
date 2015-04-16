@@ -24,23 +24,25 @@ struct StringList * sl;
 %nonassoc  CREATE TABLE SELECT FROM WHERE DATABASE USER DATE TIMESTAMP STRING DELIM GRANT ALL PRIVILEGES ON TO IDENTIFIED BY QUOTE DATATYPE INSERT INTO VALUES CLEAR USE
 %type <n> E 
 %type <ch> STRING ADDRESS QSTRING TIMESTAMP DATATYPE
-%type <sl> TABLEATTRIBUTES
+%type <sl> TABLEATTRIBUTES COLUMNS TUPLE COLUMNNAMES
 %%
 
 
 start: 	E  DELIM								{return 0;}
 		;
-E: 		CREATE DATABASE	STRING DELIM E		{createDb($3);}
-		| CREATETABLE DELIM E 				{;}		
-		| CREATEUSER DELIM E					{;}
-		| GRANTON DELIM E					{;}
-		| DATATYPE DELIM						{printf("you have entered:%s\n",$1);}
-		| INSERTINTO 	DELIM E					{;}
-		| CLEAR DATABASE DELIM				{;}
-		| USE DATABASE STRING DELIM			{useDb($3);}
+statement: CREATE DATABASE 	STRING 		{createDb($3);}
+		| CREATETABLE 				{;}		
+		| CREATEUSER  					{;}
+		| GRANTON  					{;}
+		| DATATYPE 						{printf("you have entered:%s\n",$1);}
+		| INSERTINTO  					{;}
+		| CLEAR DATABASE 				{;}
+		| USE DATABASE STRING 			{useDb($3);}
 		|									{;}
 		;
-	
+E:	E DELIM statement					{;}
+	|statement						{;}
+	;
 CREATETABLE:	CREATE TABLE STRING'.'STRING '(' TABLEATTRIBUTES ')' 	{createTable($3,$5,$7);}
 				| CREATE TABLE STRING '(' TABLEATTRIBUTES ')'			{createTable(NULL,$3, $5);}
 		;
@@ -58,18 +60,18 @@ CREATEUSER:	CREATE USER QSTRING '@' QSTRING IDENTIFIED BY QSTRING					{;}
 			;
 GRANTON:	GRANT ALL PRIVILEGES ON QSTRING '.' QSTRING TO QSTRING '@' QSTRING		{;}
 			;
-INSERTINTO:	INSERT INTO STRING  COLUMNS VALUES '(' TUPLE ')'							{;}
+INSERTINTO:	INSERT INTO STRING  COLUMNS VALUES '(' TUPLE ')'							{insert($3,$4,$7);}
 			;
-QSTRING:	QUOTE STRING QUOTE													{$$=$2;}			
+QSTRING:	QUOTE STRING QUOTE									{$$=$2;}			
 			;
-COLUMNS:	'(' COLUMNNAMES ')' 													{;}
-			|																	{;}
+COLUMNS:	'(' COLUMNNAMES ')' 									{$$=$2;}
+			|													{$$=NULL;}
 			;			
-COLUMNNAMES:	STRING ',' COLUMNNAMES											{;}
-				| STRING															{;}
+COLUMNNAMES:	STRING ',' COLUMNNAMES							{temp = makeStringNode($1, NULL); makeStringList(temp, $3); $$=temp;}
+				| STRING											{$$ = makeStringNode($1, NULL);}
 				;
-TUPLE:		QSTRING ',' TUPLE														{;}
-			| QSTRING															{;}
+TUPLE:		QSTRING ',' TUPLE										{temp = makeStringNode($1, NULL); makeStringList(temp, $3); $$=temp;}
+			| QSTRING											{$$ = makeStringNode($1, NULL);}
 			;
 %%
 void yyerror(char *s) {
@@ -92,7 +94,7 @@ int main(void){
 	if(rootFlag){
 		int result = mkdir("root", 0777);
 	}
-
+	dbInUse[0]='\0';
 	yyparse();
 	return 0;
 }

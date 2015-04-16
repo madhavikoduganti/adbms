@@ -39,4 +39,4 @@ struct StringList{
 } *stringHead, *temp;
 
 char * root = "./root/";
-char dbInUse[50];
+char dbInUse[100];
