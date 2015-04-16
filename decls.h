@@ -31,3 +31,11 @@ struct tableSpec{
 	int columns;
 	int tuples;
 };
+
+struct StringList{
+	char * string1;
+	char * string2;
+	struct StringList * next;
+} *stringHead, *temp;
+
+char * root = "./root/";

@@ -21,6 +21,10 @@ on			(?i:on)
 to			(?i:to)
 identified		(?i:identified)
 by			(?i:by)
+insert		(?i:insert)
+into			(?i:into)
+values		(?i:values)
+clear		(?i:clear)
 address		\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}
 
 
@@ -47,21 +51,18 @@ minus		\-
 {to}			{return TO;}
 {identified}		{return IDENTIFIED;}
 {by}			{return BY;}
+{insert}			{return INSERT;}
+{into}			{return INTO;}
+{values}			{return VALUES;}
+{clear}			{return CLEAR;}
 
  	
 {datatype}		{yylval.ch=strdup(yytext);return DATATYPE;}
-
 {string}			{yylval.ch=strdup(yytext);return STRING;}
 {address}		{yylval.ch=strdup(yytext);return ADDRESS;}
 
 {timestamp}		{return TIMESTAMP;}
 {date}			{return DATE;}
-
-{minus}			{return UMINUS;}
-{plus}			{return PLUS;}
-{pdt}			{return PDT;}
-
-{number}		{yylval.n=atoi(yytext);return NUM;}
 [(),@\.]			return *yytext;
 ;				return DELIM;
 {quote}			return QUOTE;
